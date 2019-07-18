@@ -230,7 +230,7 @@ After :- Number of Brokers =3 ,New Leader IP 182
 
 
 
-#### [Hyperledger Block Explorer](https://github.com/hyperledger/blockchain-explorer)
+### [Hyperledger Block Explorer](https://github.com/hyperledger/blockchain-explorer)
 
 Follow this [article](https://medium.com/beyondi/understanding-hyperledger-explorer-setup-via-docker-6af845fcb82e) to setup the block explorer.
 
