@@ -171,7 +171,7 @@ Copy (or use bind) the files from network artifacts , crypto and chaincode direc
   ```
 
 
-  ![](images/peer1-org2-cc-instantiated.png)
+  ![](images/peer0-org1-cc-instantiated.png)
 
   ​																*Chaincode Instantiated*
 
