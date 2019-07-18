@@ -1,0 +1,98 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+  fabnet:
+
+volumes:
+  peer0.org1.fabric.com:
+  peer1.org1.fabric.com:
+  peer0.org2.fabric.com:
+  peer1.org2.fabric.com:
+
+services:
+  peer0.org1.fabric.com:
+    container_name: peer0.org1.fabric.com
+    #hostname: peer0.org1.fabric.com
+    image: hyperledger/fabric-peer:$IMAGE_TAG
+    environment:
+       - CORE_PEER_ID=peer0.org1.fabric.com
+       - CORE_PEER_ADDRESS=peer0.org1.fabric.com:7051
+       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.fabric.com:7051
+       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.fabric.com:7051
+       #- CORE_PEER_CHAINCODELISTENADDRESS=peer0.org1.fabric.com:7052
+       - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+       - CORE_PEER_LOCALMSPID=Org1MSP
+       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_fabnet
+       - FABRIC_LOGGING_SPEC=INFO
+       - CORE_PEER_GOSSIP_USELEADERELECTION=true
+       - CORE_PEER_GOSSIP_ORGLEADER=false
+       - CORE_PEER_PROFILE_ENABLED=true
+       - CORE_PEER_TLS_ENABLED=true
+       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    volumes:
+       - /var/run/:/host/var/run/
+       - ./crypto-config/peerOrganizations/org1.fabric.com/peers/peer0.org1.fabric.com/msp:/etc/hyperledger/fabric/msp
+       - ./crypto-config/peerOrganizations/org1.fabric.com/peers/peer0.org1.fabric.com/tls:/etc/hyperledger/fabric/tls
+       - peer0.org1.fabric.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7052:7052
+      - 7053:7053
+    extra_hosts:
+      - "orderer1.fabric.com:192.168.1.180"
+      - "orderer2.fabric.com:192.168.1.181"
+      - "orderer3.fabric.com:192.168.1.182"
+      - "peer0.org1.fabric.com:192.168.1.183"
+      - "peer1.org1.fabric.com:192.168.1.184"
+      - "peer0.org2.fabric.com:192.168.1.185" 
+      - "peer1.org2.fabric.com:192.168.1.186"
+    networks:
+      - fabnet
+
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org1.fabric.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.fabric.com/peers/peer0.org1.fabric.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.fabric.com/peers/peer0.org1.fabric.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.fabric.com/peers/peer0.org1.fabric.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.fabric.com/users/Admin@org1.fabric.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    extra_hosts:
+      - "orderer1.fabric.com:192.168.1.180"
+      - "orderer2.fabric.com:192.168.1.181"
+      - "orderer3.fabric.com:192.168.1.182"
+      - "peer0.org1.fabric.com:192.168.1.183"
+      - "peer1.org1.fabric.com:192.168.1.184"
+      - "peer0.org2.fabric.com:192.168.1.185" 
+      - "peer1.org2.fabric.com:192.168.1.186"
+    networks:
+      - fabnet
+
+

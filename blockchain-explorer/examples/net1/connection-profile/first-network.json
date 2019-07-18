@@ -1,0 +1,102 @@
+{
+	"name": "first-network",
+	"version": "1.0.0",
+	"client": {
+		"tlsEnable": true,
+		"adminUser": "admin",
+		"adminPassword": "adminpw",
+		"enableAuthentication": false,
+		"organization": "Org1MSP",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+	"channels": {
+		"rtrchannel01": {
+			"peers": {
+				"peer0.org1.fabric.com": {},
+				"peer1.org1.fabric.com": {},
+				"peer0.org2.fabric.com": {},
+				"peer1.org2.fabric.com": {}
+			},
+			"connection": {
+				"timeout": {
+					"peer": {
+						"endorser": "6000",
+						"eventHub": "6000",
+						"eventReg": "6000"
+					}
+				}
+			}
+		}
+	},
+	"organizations": {
+		"Org1MSP": {
+			"mspid": "Org1MSP",
+			"fullpath": true,
+			"adminPrivateKey": {
+				"path": "/tmp/crypto/peerOrganizations/org1.fabric.com/users/Admin@org1.fabric.com/msp/keystore/9d87ea6f1575efb03d60210ec603532ff855fe38b68fd05ea23beecf685e55cc_sk"
+			},
+			"signedCert": {
+				"path": "/tmp/crypto/peerOrganizations/org1.fabric.com/users/Admin@org1.fabric.com/msp/signcerts/Admin@org1.fabric.com-cert.pem"
+			}
+		},
+		"Org2MSP": {
+			"mspid": "Org2MSP",
+			"fullpath": true,
+			"adminPrivateKey": {
+				"path": "/tmp/crypto/peerOrganizations/org2.fabric.com/users/Admin@org2.fabric.com/msp/keystore/4aae2e804f27c894b3543ca45183aed9151a69afbf0165b34258e5eded5e3ed7_sk"
+			},
+			"signedCert": {
+				"path": "/tmp/crypto/peerOrganizations/org2.fabric.com/users/Admin@org2.fabric.com/msp/signcerts/Admin@org2.fabric.com-cert.pem"
+			}
+		}
+	},
+	"peers": {
+		"peer0.org1.fabric.com": {
+			"tlsCACerts": {
+				"path": "/tmp/crypto/peerOrganizations/org1.fabric.com/peers/peer0.org1.fabric.com/tls/ca.crt"
+			},
+			"url": "grpcs://peer0.org1.fabric.com:7051",
+			"eventUrl": "grpcs://peer0.org1.fabric.com:7053",
+			"grpcOptions": {
+				"ssl-target-name-override": "peer0.org1.fabric.com"
+			}
+		},
+		"peer1.org1.fabric.com": {
+			"tlsCACerts": {
+				"path": "/tmp/crypto/peerOrganizations/org1.fabric.com/peers/peer1.org1.fabric.com/tls/ca.crt"
+			},
+			"url": "grpcs://peer1.org1.fabric.com:7051",
+			"eventUrl": "grpcs://peer1.org1.fabric.com:7053",
+			"grpcOptions": {
+				"ssl-target-name-override": "peer1.org1.fabric.com"
+			}
+		},
+		"peer0.org2.fabric.com": {
+			"tlsCACerts": {
+				"path": "/tmp/crypto/peerOrganizations/org2.fabric.com/peers/peer0.org2.fabric.com/tls/ca.crt"
+			},
+			"url": "grpcs://peer0.org2.fabric.com:7051",
+			"eventUrl": "grpcs://peer0.org2.fabric.com:7053",
+			"grpcOptions": {
+				"ssl-target-name-override": "peer0.org2.fabric.com"
+			}
+		},
+		"peer1.org2.fabric.com": {
+			"tlsCACerts": {
+				"path": "/tmp/crypto/peerOrganizations/org2.fabric.com/peers/peer1.org2.fabric.com/tls/ca.crt"
+			},
+			"url": "grpcs://peer1.org2.fabric.com:7051",
+			"eventUrl": "grpcs://peer1.org2.fabric.com:7053",
+			"grpcOptions": {
+				"ssl-target-name-override": "peer1.org2.fabric.com"
+			}
+		}
+	}
+}

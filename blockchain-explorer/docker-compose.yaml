@@ -1,0 +1,107 @@
+
+# SPDX-License-Identifier: Apache-2.0
+version: '2.1'
+
+volumes:
+  pgdata:
+  walletstore:
+  grafana-storage:
+  prometheus-storage:
+
+# networks:
+  # fabric.com:
+    # external:
+      # name: net_byfn
+networks:
+  byfn:
+
+services:
+
+  explorerdb.fabric.com:
+    image: hyperledger/explorer-db:latest
+    container_name: explorerdb.fabric.com
+    hostname: explorerdb.fabric.com
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=hppoc
+      - DATABASE_PASSWORD=password
+    volumes:
+      - ./app/persistence/fabric/postgreSQL/db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+      - pgdata:/var/lib/postgresql/data
+    extra_hosts:
+      - "orderer1.fabric.com:192.168.1.180"
+      - "orderer2.fabric.com:192.168.1.181"
+      - "orderer3.fabric.com:192.168.1.182"
+      - "peer0.org1.fabric.com:192.168.1.183"
+      - "peer1.org1.fabric.com:192.168.1.184"
+      - "peer0.org2.fabric.com:192.168.1.185" 
+      - "peer1.org2.fabric.com:192.168.1.186"
+    networks:
+      - byfn
+
+  explorer.fabric.com:
+    image: hyperledger/explorer:latest
+    container_name: explorer.fabric.com
+    hostname: explorer.fabric.com
+    environment:
+      - DATABASE_HOST=explorerdb.fabric.com
+      - DATABASE_USERNAME=hppoc
+      - DATABASE_PASSWD=password
+      - DISCOVERY_AS_LOCALHOST=false
+    volumes:
+      - ./examples/net1/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./examples/net1/connection-profile:/opt/explorer/app/platform/fabric/connection-profile
+      - ../rtr-kafka-orderer/crypto-config:/tmp/crypto
+      - walletstore:/opt/wallet
+    command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
+    ports:
+      - 8090:8080
+    extra_hosts:
+      - "orderer1.fabric.com:192.168.1.180"
+      - "orderer2.fabric.com:192.168.1.181"
+      - "orderer3.fabric.com:192.168.1.182"
+      - "peer0.org1.fabric.com:192.168.1.183"
+      - "peer1.org1.fabric.com:192.168.1.184"
+      - "peer0.org2.fabric.com:192.168.1.185" 
+      - "peer1.org2.fabric.com:192.168.1.186"
+    networks:
+      - byfn
+
+  proms:
+    container_name: proms
+    image: prom/prometheus:latest
+    volumes:
+      - ./app/platform/fabric/artifacts/operations/balance-transfer/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-storage:/prometheus
+    ports:
+      - '9090:9090'
+    extra_hosts:
+      - "orderer1.fabric.com:192.168.1.180"
+      - "orderer2.fabric.com:192.168.1.181"
+      - "orderer3.fabric.com:192.168.1.182"
+      - "peer0.org1.fabric.com:192.168.1.183"
+      - "peer1.org1.fabric.com:192.168.1.184"
+      - "peer0.org2.fabric.com:192.168.1.185" 
+      - "peer1.org2.fabric.com:192.168.1.186"
+    networks:
+      - byfn
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    volumes:
+      - ./app/platform/fabric/artifacts/operations/balance-transfer/balance-transfer-grafana-dashboard.json:/var/lib/grafana/dashboards/mydashboard.json
+      - ./app/platform/fabric/artifacts/operations/grafana_conf/provisioning:/etc/grafana/provisioning
+      - grafana-storage:/var/lib/grafana
+    ports:
+      - '3000:3000'
+    extra_hosts:
+      - "orderer1.fabric.com:192.168.1.180"
+      - "orderer2.fabric.com:192.168.1.181"
+      - "orderer3.fabric.com:192.168.1.182"
+      - "peer0.org1.fabric.com:192.168.1.183"
+      - "peer1.org1.fabric.com:192.168.1.184"
+      - "peer0.org2.fabric.com:192.168.1.185" 
+      - "peer1.org2.fabric.com:192.168.1.186"
+    networks:
+      - byfn
