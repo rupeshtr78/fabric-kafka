@@ -235,7 +235,7 @@ After :- Number of Brokers =3 ,New Leader IP 182
 Follow this [article](https://medium.com/beyondi/understanding-hyperledger-explorer-setup-via-docker-6af845fcb82e) to setup the block explorer.
 
 Setup and Start the explorer. The dashboard has very useful information we can use to verify our deployment and transactions.
-The [config files](blockchain-explorer/examples) for this deployment are in the blockchain-explorer directory.
+The [config files](blockchain-explorer/examples/net1) for this deployment are in the blockchain-explorer directory.
 
 ![](images/Hyp-explorer-dash.png)
 
