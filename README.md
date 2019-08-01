@@ -90,7 +90,7 @@ If you intent to modify the network topology, change the configuration files (.y
 ```bash
 bin/cryptogen generate --config=./crypto-config.yaml
 
-bin/configtxgen -profile TwoOrgsOrdererGenesis -channelID rtr-sys-channel -outputBlock ./channel-artifacts/genesis.block
+bin/configtxgen -profile SampleDevModeKafka -channelID rtr-sys-channel -outputBlock ./channel-artifacts/genesis.block
 
 export CHANNEL_NAME=rtrchannel01
 bin/configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
